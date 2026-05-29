@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menoova — Digital Menus for Restaurants & Venues</title>
+  <meta name="description" content="Beautiful digital menus via QR code for restaurants, bars, hotels, spas and any venue. Free until December 2026. Founding member pricing locked forever." />
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://menoova.com">
+  <meta property="og:title" content="Menoova — Digital Menus for Any Venue">
+  <meta property="og:description" content="Free until December 2026. Join as a founding member and lock in exclusive pricing forever.">
+  <meta property="og:image" content="https://menoova.com/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      --bg: #0a0d0f;
+      --cream: #f0ece4;
+      --muted: #8a8378;
+      --gold: #c9a84c;
+      --gold2: #e8c97a;
+      --green: #7fff9a;
+      --line: rgba(240,236,228,0.10);
+      --shadow: 0 32px 80px rgba(0,0,0,0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--cream);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      overflow: hidden;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(201,168,76,0.12), transparent 38%),
+        radial-gradient(circle at 85% 20%, rgba(240,236,228,0.05), transparent 35%),
+        var(--bg);
+    }
+
+    .container { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+
+    /* HEADER */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(20px);
+      background: rgba(10,13,15,0.85);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      height: 70px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: 0.06em; font-size: 15px; }
+    .mark {
+      width: 34px; height: 34px; border-radius: 10px;
+      border: 1px solid rgba(201,168,76,0.3);
+      display: grid; place-items: center;
+      background: linear-gradient(145deg, rgba(201,168,76,.15), rgba(201,168,76,.05));
+    }
+    .mark svg { width: 20px; height: 20px; }
+    .nav-links { display: flex; align-items: center; gap: 24px; color: var(--muted); font-size: 13px; }
+    .nav-links a:hover { color: var(--cream); }
+
+    /* BUTTONS */
+    .cta {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 44px; padding: 0 22px; border-radius: 999px;
+      background: var(--cream); color: #0a0d0f; font-weight: 800; font-size: 14px;
+      box-shadow: 0 8px 28px rgba(240,236,228,0.12);
+      transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border: none; font-family: inherit;
+    }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(240,236,228,0.2); }
+
+    .cta-gold {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 58px; padding: 0 36px; border-radius: 999px; font-size: 17px; font-weight: 900;
+      background: linear-gradient(135deg, #c9a84c, #e8c97a);
+      color: #0a0d0f;
+      box-shadow: 0 14px 44px rgba(201,168,76,0.35);
+      transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border: none; font-family: inherit;
+    }
+    .cta-gold:hover { transform: translateY(-3px); box-shadow: 0 22px 56px rgba(201,168,76,0.45); }
+
+    .btn-email {
+      min-height: 44px; padding: 0 18px; border-radius: 999px;
+      border: 1px solid var(--line);
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 14px; font-weight: 600;
+      background: rgba(255,255,255,0.03);
+      transition: all 0.2s; cursor: pointer; font-family: inherit;
+    }
+    .btn-email:hover { color: var(--cream); border-color: rgba(240,236,228,0.2); }
+
+    /* FOUNDING BADGE */
+    .founding-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.06));
+      border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold2); font-size: 12px; font-weight: 800; letter-spacing: 0.04em;
+      text-transform: uppercase; margin-bottom: 24px;
+    }
+    .founding-badge .star { font-size: 14px; }
+
+    /* HERO */
+    .hero { padding: 80px 0 70px; }
+    .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 60px; align-items: center; }
+
+    h1 {
+      font-size: clamp(44px, 6.5vw, 82px); line-height: 0.94;
+      letter-spacing: -0.07em; margin-bottom: 24px;
+    }
+    h1 em { font-style: normal; color: var(--gold2); }
+
+    .hero-sub {
+      max-width: 520px; color: var(--muted); font-size: 18px; margin-bottom: 16px; line-height: 1.55;
+    }
+
+    .free-box {
+      display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px;
+      border-radius: 16px; background: rgba(127,255,154,0.08);
+      border: 1px solid rgba(127,255,154,0.2); margin-bottom: 28px;
+    }
+    .free-box .f-title { color: var(--green); font-weight: 800; font-size: 15px; }
+    .free-box .f-sub { color: var(--muted); font-size: 13px; }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 28px; }
+
+    .trust-row { display: flex; flex-wrap: wrap; gap: 16px; }
+    .trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .trust-item b { color: var(--gold2); }
+
+    /* PHONE MOCK */
+    .phone-wrap { position: relative; min-height: 560px; display: grid; place-items: center; }
+    .glow {
+      position: absolute; width: 320px; height: 320px;
+      background: rgba(201,168,76,0.14); filter: blur(70px); border-radius: 50%;
+    }
+    .phone {
+      position: relative; width: min(300px, 82vw); min-height: 540px;
+      border-radius: 38px; border: 1px solid rgba(201,168,76,0.18);
+      background: #0f1211; box-shadow: var(--shadow); padding: 12px;
+    }
+    .screen { border-radius: 28px; min-height: 516px; overflow: hidden; background: #f5f0e8; color: #171411; }
+    .menu-cover {
+      padding: 26px 18px; min-height: 175px; color: white;
+      background: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.62)),
+        url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80') center/cover;
+      display: flex; flex-direction: column; justify-content: end;
+    }
+    .mini-logo {
+      width: 44px; height: 44px; border-radius: 13px; background: rgba(255,255,255,.9);
+      color: #161616; display: grid; place-items: center; font-weight: 900; margin-bottom: 12px; font-size: 13px;
+    }
+    .menu-cover h3 { font-size: 22px; letter-spacing: -0.04em; line-height: 1; }
+    .menu-cover span { color: rgba(255,255,255,.65); font-size: 11px; margin-top: 5px; }
+    .menu-body { padding: 14px; }
+    .pill-row { display: flex; gap: 6px; margin-bottom: 13px; overflow: hidden; }
+    .pill {
+      white-space: nowrap; border-radius: 999px; padding: 6px 10px;
+      background: white; color: #605641; font-size: 10px; font-weight: 800;
+      box-shadow: 0 4px 12px rgba(0,0,0,.05);
+    }
+    .menu-card {
+      background: white; border-radius: 14px; padding: 12px; margin-bottom: 9px;
+      box-shadow: 0 5px 16px rgba(80,60,40,.06);
+    }
+    .menu-card-top { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+    .menu-card h4 { font-size: 12px; margin-bottom: 3px; font-weight: 700; }
+    .menu-card p { color: #887b6d; font-size: 10px; margin: 0; }
+    .mock-price { color: #6e684b; font-weight: 900; font-size: 12px; white-space: nowrap; }
+    .bottom-demo {
+      margin-top: 13px; display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 6px; background: #141614; padding: 8px; border-radius: 18px;
+      color: white; font-size: 8px; text-align: center;
+    }
+
+    /* VENUES STRIP */
+    .venues-strip {
+      padding: 28px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+    .venues-label { font-size: 12px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; }
+    .venues-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .venue-tag {
+      padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03); font-size: 13px; color: var(--muted);
+    }
+
+    /* SECTIONS */
+    .section { padding: 84px 0; border-top: 1px solid var(--line); }
+    .section-head { max-width: 660px; margin-bottom: 40px; }
+    .section-head h2 {
+      font-size: clamp(28px, 4.2vw, 50px); line-height: 1.02;
+      letter-spacing: -0.055em; margin-bottom: 14px;
+    }
+    .section-head p { color: var(--muted); font-size: 16px; }
+
+    /* FOUNDING SECTION */
+    .founding-section {
+      padding: 80px 0; border-top: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(201,168,76,0.05), transparent);
+    }
+    .founding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .founding-left h2 {
+      font-size: clamp(30px, 4.5vw, 52px); line-height: 1;
+      letter-spacing: -0.055em; margin-bottom: 16px;
+    }
+    .founding-left h2 em { font-style: normal; color: var(--gold2); }
+    .founding-left p { color: var(--muted); font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
+
+    .timeline {
+      display: grid; gap: 0;
+    }
+    .tl-item {
+      display: grid; grid-template-columns: 28px 1fr; gap: 16px;
+      padding-bottom: 24px; position: relative;
+    }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-dot {
+      width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+      font-size: 12px; font-weight: 900; flex-shrink: 0; margin-top: 2px;
+    }
+    .tl-dot.now { background: rgba(127,255,154,0.18); border: 1px solid rgba(127,255,154,0.35); color: var(--green); }
+    .tl-dot.dec { background: rgba(201,168,76,0.18); border: 1px solid rgba(201,168,76,0.35); color: var(--gold2); }
+    .tl-dot.jan { background: rgba(240,236,228,0.1); border: 1px solid var(--line); color: var(--cream); }
+    .tl-line {
+      position: absolute; left: 13px; top: 30px; bottom: 0;
+      width: 1px; background: var(--line);
+    }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-content h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+    .tl-content p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* PRICING */
+    .pricing-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
+    .price-card {
+      border: 1px solid var(--line); border-radius: 26px; padding: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    }
+    .price-card.featured {
+      border-color: rgba(201,168,76,.38);
+      background: linear-gradient(180deg, rgba(201,168,76,.12), rgba(255,255,255,.02));
+      position: relative; overflow: hidden;
+    }
+    .pop-badge {
+      position: absolute; top: 16px; right: 16px;
+      background: linear-gradient(135deg, #c9a84c, #e8c97a); color: #0a0d0f;
+      padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 900;
+    }
+    .plan-icon {
+      width: 42px; height: 42px; border-radius: 13px;
+      background: rgba(201,168,76,.12); display: grid; place-items: center;
+      color: var(--gold); margin-bottom: 18px; font-size: 18px;
+    }
+    .plan-name { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 5px; }
+    .plan-desc { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+
+    .free-until {
+      padding: 12px 14px; border-radius: 14px;
+      background: rgba(127,255,154,0.07); border: 1px solid rgba(127,255,154,0.18);
+      margin-bottom: 16px;
+    }
+    .free-until .fu-title { color: var(--green); font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+    .free-until .fu-sub { color: var(--muted); font-size: 12px; }
+
+    .founding-price {
+      padding: 12px 14px; border-radius: 14px;
+      background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.2);
+      margin-bottom: 20px;
+    }
+    .founding-price .fp-label { font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+    .founding-price .fp-price { font-size: 36px; font-weight: 900; letter-spacing: -0.05em; color: var(--cream); }
+    .founding-price .fp-period { font-size: 13px; color: var(--muted); }
+    .founding-price .fp-note { font-size: 12px; color: var(--gold2); margin-top: 4px; }
+
+    .feature-list { list-style: none; display: grid; gap: 9px; margin-bottom: 22px; }
+    .feature-list li { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+    .feature-list li::before { content: "✓"; color: var(--gold2); font-weight: 900; flex-shrink: 0; }
+
+    .reassure-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+    .reassure-chip {
+      display: flex; align-items: center; gap: 4px; padding: 4px 10px;
+      border-radius: 999px; background: rgba(255,255,255,.04);
+      border: 1px solid var(--line); font-size: 11px; color: var(--muted);
+    }
+    .reassure-chip span { color: var(--green); }
+
+    /* HOW */
+    .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .how-card {
+      border: 1px solid var(--line); border-radius: 22px; padding: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    }
+    .how-num {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.25);
+      color: var(--gold2); display: grid; place-items: center; font-weight: 900;
+      margin-bottom: 16px;
+    }
+    .how-card h3 { font-size: 17px; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .how-card p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    /* VENUES CARDS */
+    .venue-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .venue-card {
+      border: 1px solid var(--line); border-radius: 18px; padding: 20px;
+      background: rgba(255,255,255,.03); text-align: center;
+    }
+    .venue-card .emoji { font-size: 28px; margin-bottom: 10px; }
+    .venue-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .venue-card p { font-size: 12px; color: var(--muted); }
+
+    /* FAQ */
+    details {
+      border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px;
+      background: rgba(255,255,255,.03); cursor: pointer;
+    }
+    summary {
+      font-weight: 700; font-size: 14px; list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    summary .plus { color: var(--gold); font-size: 17px; flex-shrink: 0; margin-left: 10px; }
+    details p { color: var(--muted); font-size: 13px; margin-top: 10px; line-height: 1.6; }
+
+    /* FINAL */
+    .final-box {
+      border: 1px solid rgba(201,168,76,0.25); border-radius: 32px; padding: 70px 30px; text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(201,168,76,.15), transparent 48%),
+        rgba(255,255,255,.02);
+    }
+    .final-box h2 {
+      font-size: clamp(32px, 5vw, 60px); line-height: 1;
+      letter-spacing: -0.06em; margin-bottom: 12px;
+    }
+    .final-box h2 em { font-style: normal; color: var(--gold2); }
+    .final-box p { max-width: 520px; margin: 0 auto 28px; color: var(--muted); font-size: 16px; }
+    .final-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; }
+    .final-reassure {
+      display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+      font-size: 12px; color: var(--muted);
+    }
+    .final-reassure span b { color: var(--green); }
+
+    footer { border-top: 1px solid var(--line); padding: 26px 0; color: var(--muted); font-size: 13px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .hero-grid, .founding-grid { grid-template-columns: 1fr; }
+      .phone-wrap { min-height: auto; }
+      .pricing-grid, .how-grid, .venue-cards { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero { padding-top: 52px; }
+    }
+    @media (max-width: 520px) {
+      .container { width: calc(100% - 28px); }
+      .nav { height: 62px; }
+      .phone { transform: scale(.88); transform-origin: top center; }
+      .phone-wrap { margin-bottom: -52px; }
+      .venue-cards { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <span class="mark">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 48V17C12 14.8 14.7 13.7 16.2 15.3L32 32L47.8 15.3C49.3 13.7 52 14.8 52 17V48" stroke="#f0ece4" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="32" cy="48" r="5" fill="#c9a84c"/>
+          </svg>
+        </span>
+        <span>MENOOVA</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#venues">Venues</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="cta" href="mailto:hello@menoova.com">Get started free</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="founding-badge"><span class="star">★</span> Founding Member Program — Open Now</div>
+          <h1>Your menu.<br><em>On every phone.</em></h1>
+          <p class="hero-sub">Menoova creates a beautiful digital menu for your venue in 48 hours. Customers scan a QR code and see your menu instantly — no app needed.</p>
+
+          <div class="free-box">
+            <div>
+              <div class="f-title">🎁 Free until December 2026</div>
+              <div class="f-sub">Join now as a founding member. Lock in exclusive pricing forever.</div>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <a class="cta-gold" href="mailto:hello@menoova.com?subject=Founding Member — I want my free menu">
+              ★ Join free — founding member
+            </a>
+          </div>
+
+          <div class="trust-row">
+            <div class="trust-item"><b>✓</b> No credit card</div>
+            <div class="trust-item"><b>✓</b> No commitment</div>
+            <div class="trust-item"><b>✓</b> Menu ready in 48h</div>
+            <div class="trust-item"><b>✓</b> Cancel anytime</div>
+          </div>
+        </div>
+
+        <div class="phone-wrap">
+          <div class="glow"></div>
+          <div class="phone">
+            <div class="screen">
+              <div class="menu-cover">
+                <div class="mini-logo">M</div>
+                <h3>The Harbour Grill</h3>
+                <span>Digital menu · Sydney, AU</span>
+              </div>
+              <div class="menu-body">
+                <div class="pill-row">
+                  <div class="pill">🥗 Starters</div>
+                  <div class="pill">🥩 Mains</div>
+                  <div class="pill">🍷 Drinks</div>
+                </div>
+                <div class="menu-card">
+                  <div class="menu-card-top">
+                    <div><h4>Burrata & Heirloom</h4><p>Fresh burrata, heirloom tomatoes, basil oil</p></div>
+                    <div class="mock-price">$18</div>
+                  </div>
+                </div>
+                <div class="menu-card">
+                  <div class="menu-card-top">
+                    <div><h4>Grilled Barramundi</h4><p>Lemon butter, capers, seasonal greens</p></div>
+                    <div class="mock-price">$34</div>
+                  </div>
+                </div>
+                <div class="menu-card">
+                  <div class="menu-card-top">
+                    <div><h4>Tiramisu</h4><p>Classic recipe, espresso, mascarpone</p></div>
+                    <div class="mock-price">$12</div>
+                  </div>
+                </div>
+                <div class="bottom-demo">
+                  <span>🏠 Home</span><span>📋 Menu</span><span>📍 Find us</span><span>📞 Call</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VENUES STRIP -->
+    <div class="venues-strip">
+      <div class="container">
+        <div class="venues-label">Works for any venue with a menu</div>
+        <div class="venues-list">
+          <span class="venue-tag">🍽️ Restaurants</span>
+          <span class="venue-tag">☕ Cafés & Bars</span>
+          <span class="venue-tag">🏨 Hotels</span>
+          <span class="venue-tag">🧖 Spas & Wellness</span>
+          <span class="venue-tag">🍺 Pubs & Breweries</span>
+          <span class="venue-tag">🎪 Events & Pop-ups</span>
+          <span class="venue-tag">🍕 Food Trucks</span>
+          <span class="venue-tag">🛍️ Retail & Shops</span>
+          <span class="venue-tag">🏋️ Gyms & Studios</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOUNDING MEMBER -->
+    <section class="founding-section" id="founding">
+      <div class="container founding-grid">
+        <div class="founding-left">
+          <div class="founding-badge" style="margin-bottom:20px;"><span class="star">★</span> Founding Member Program</div>
+          <h2>Get in early.<br><em>Stay cheap forever.</em></h2>
+          <p>We're building Menoova from the ground up. The first venues to join become founding members — and founding members lock in the lowest price we'll ever offer, for as long as they stay.</p>
+          <p style="margin-bottom:0;">No contracts. No pressure. If it's not for you in December, you walk away — no questions asked.</p>
+        </div>
+
+        <div class="timeline">
+          <div class="tl-item">
+            <div>
+              <div class="tl-dot now">✓</div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-content">
+              <h4>Now — Join free</h4>
+              <p>Send us your menu. We build your digital page in 48 hours. You get the QR code and start using it immediately. Zero cost.</p>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div>
+              <div class="tl-dot dec">★</div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-content">
+              <h4>December 2026 — You decide</h4>
+              <p>We reach out to you. If you love it, you lock in founding member pricing forever. If not, no problem — your menu simply goes offline.</p>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div>
+              <div class="tl-dot jan"></div>
+            </div>
+            <div class="tl-content">
+              <h4>January 2027 — Founding price locked</h4>
+              <p>Your exclusive rate is locked forever. New customers will pay more. You won't.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-head">
+          <h2>Ready in 48 hours.</h2>
+          <p>You send us your content. We do everything else. No technical knowledge needed.</p>
+        </div>
+        <div class="how-grid">
+          <div class="how-card">
+            <div class="how-num">1</div>
+            <h3>Send us your menu</h3>
+            <p>Email us your logo, products, prices and address. A photo of your existing menu is fine too.</p>
+          </div>
+          <div class="how-card">
+            <div class="how-num">2</div>
+            <h3>We build your page</h3>
+            <p>In 48 hours we create a beautiful, mobile-optimized digital menu with your branding and colors.</p>
+          </div>
+          <div class="how-card">
+            <div class="how-num">3</div>
+            <h3>Place the QR & done</h3>
+            <p>Print your QR code on tables, counters, windows or social media. Customers tap and see your menu instantly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VENUES -->
+    <section class="section" id="venues">
+      <div class="container">
+        <div class="section-head">
+          <h2>Built for any venue.</h2>
+          <p>If you have a menu and a customer who can scan a QR code, Menoova works for you.</p>
+        </div>
+        <div class="venue-cards">
+          <div class="venue-card"><div class="emoji">🍽️</div><h4>Restaurants</h4><p>Full menus with categories, prices and descriptions.</p></div>
+          <div class="venue-card"><div class="emoji">☕</div><h4>Cafés & Bars</h4><p>Daily specials, drinks list, seasonal items.</p></div>
+          <div class="venue-card"><div class="emoji">🏨</div><h4>Hotels</h4><p>Room service, spa menu, breakfast and dinner.</p></div>
+          <div class="venue-card"><div class="emoji">🧖</div><h4>Spas & Wellness</h4><p>Treatment menus, pricing, booking info.</p></div>
+          <div class="venue-card"><div class="emoji">🍺</div><h4>Pubs & Breweries</h4><p>Tap list, food menu, events and specials.</p></div>
+          <div class="venue-card"><div class="emoji">🎪</div><h4>Events & Pop-ups</h4><p>Quick setup for temporary or seasonal venues.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <h2>Founding member pricing.<br>Locked forever.</h2>
+          <p>Free until December 2026. After that, founding members get the lowest rate we'll ever offer — permanently.</p>
+        </div>
+
+        <div class="pricing-grid">
+
+          <article class="price-card">
+            <div class="plan-icon">◌</div>
+            <div class="plan-name">Starter</div>
+            <div class="plan-desc">Perfect for cafés, bars, food trucks and small venues.</div>
+
+            <div class="free-until">
+              <div class="fu-title">🎁 Free until December 2026</div>
+              <div class="fu-sub">No credit card. No commitment. Start today.</div>
+            </div>
+
+            <div class="founding-price">
+              <div class="fp-label">★ Founding member price</div>
+              <div>
+                <span class="fp-price">$9.90</span>
+                <span class="fp-period"> / month from Jan 2027</span>
+              </div>
+              <div class="fp-note">Locked forever for founding members</div>
+            </div>
+
+            <ul class="feature-list">
+              <li>Custom digital menu page</li>
+              <li>Dedicated QR code</li>
+              <li>Mobile optimized</li>
+              <li>Menu updates included</li>
+              <li>Shareable link</li>
+              <li>Email support</li>
+            </ul>
+
+            <div class="reassure-row">
+              <span class="reassure-chip"><span>✓</span> No credit card</span>
+              <span class="reassure-chip"><span>✓</span> Cancel anytime</span>
+            </div>
+
+            <a class="cta-gold" href="mailto:hello@menoova.com?subject=Founding Member Starter — Free menu request" style="width:100%;justify-content:center;">
+              Join free →
+            </a>
+          </article>
+
+          <article class="price-card featured">
+            <div class="pop-badge">MOST POPULAR</div>
+            <div class="plan-icon">✦</div>
+            <div class="plan-name">Premium</div>
+            <div class="plan-desc">For restaurants, hotels and venues with complex menus.</div>
+
+            <div class="free-until">
+              <div class="fu-title">🎁 Free until December 2026</div>
+              <div class="fu-sub">Full premium experience, zero cost until January.</div>
+            </div>
+
+            <div class="founding-price">
+              <div class="fp-label">★ Founding member price</div>
+              <div>
+                <span class="fp-price">$19.90</span>
+                <span class="fp-period"> / month from Jan 2027</span>
+              </div>
+              <div class="fp-note">Locked forever for founding members</div>
+            </div>
+
+            <ul class="feature-list">
+              <li>Premium custom design</li>
+              <li>Unlimited categories & sections</li>
+              <li>Multiple price tiers per item</li>
+              <li>Allergen & dietary info</li>
+              <li>Priority updates (24h)</li>
+              <li>Advanced mobile optimization</li>
+              <li>Priority email support</li>
+            </ul>
+
+            <div class="reassure-row">
+              <span class="reassure-chip"><span>✓</span> No credit card</span>
+              <span class="reassure-chip"><span>✓</span> Cancel anytime</span>
+            </div>
+
+            <a class="cta-gold" href="mailto:hello@menoova.com?subject=Founding Member Premium — Free menu request" style="width:100%;justify-content:center;">
+              Join free →
+            </a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head">
+          <h2>Questions answered.</h2>
+        </div>
+        <div style="display:grid;gap:9px;max-width:720px;">
+          <details>
+            <summary>Is it really free until December? <span class="plus">+</span></summary>
+            <p>Yes, completely. No credit card, no trial, no catch. You get a fully functional digital menu at zero cost until December 2026.</p>
+          </details>
+          <details>
+            <summary>What happens in December? <span class="plus">+</span></summary>
+            <p>We reach out and ask if you want to continue. If yes, you lock in your founding member rate forever. If no, your menu goes offline — no charges, no questions asked.</p>
+          </details>
+          <details>
+            <summary>What does "locked forever" mean? <span class="plus">+</span></summary>
+            <p>As long as you stay subscribed, your price never increases. New customers after January 2027 will pay standard rates — you won't.</p>
+          </details>
+          <details>
+            <summary>How do I get my menu ready? <span class="plus">+</span></summary>
+            <p>Just email us at hello@menoova.com with your menu content — a photo, a PDF or a list of items is fine. We take care of everything else in 48 hours.</p>
+          </details>
+          <details>
+            <summary>Do my customers need to download an app? <span class="plus">+</span></summary>
+            <p>No. They simply scan the QR code with their phone camera and the menu opens instantly in the browser. No app, no registration.</p>
+          </details>
+          <details>
+            <summary>Can I update my menu later? <span class="plus">+</span></summary>
+            <p>Yes. Just email us the changes and we'll update your menu within 24 hours. Updates are always included in your plan.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section">
+      <div class="container">
+        <div class="final-box">
+          <div class="founding-badge" style="margin-bottom:20px;display:inline-flex;"><span class="star">★</span> Limited founding spots</div>
+          <h2>Free until December.<br><em>Yours forever after.</em></h2>
+          <p>Join the founding member program today. Get your digital menu live in 48 hours, at zero cost. In December, decide if you want to continue at our exclusive founding rate.</p>
+          <div class="final-actions">
+            <a class="cta-gold" href="mailto:hello@menoova.com?subject=Founding Member — I want my free menu">
+              ★ Get my free menu now
+            </a>
+            <a class="btn-email" href="mailto:hello@menoova.com">hello@menoova.com</a>
+          </div>
+          <div class="final-reassure">
+            <span><b>✓</b> Free until December 2026</span>
+            <span><b>✓</b> No credit card</span>
+            <span><b>✓</b> Menu live in 48 hours</span>
+            <span><b>✓</b> Cancel anytime</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2026 Menoova — Digital menus for every venue.</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="mailto:hello@menoova.com">hello@menoova.com</a>
+        <a href="https://menoova.it" target="_blank">menoova.it</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
