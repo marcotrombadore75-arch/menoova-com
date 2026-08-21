@@ -10,20 +10,511 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://cassaiq.com/">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/styles.css">
   <title>CassaIQ — Cassa smart, tavoli e comande</title>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CassaIQ","applicationCategory":"BusinessApplication","operatingSystem":"iOS, Android","description":"Cassa smart per vendita, tavoli, comande e gestione fiscale tramite DCO o Epson RT.","offers":{"@type":"Offer","price":"8.90","priceCurrency":"EUR"}}
   </script>
+  <style>
+    :root{
+      --ink:#0e2938;
+      --ink2:#204152;
+      --muted:#5c7582;
+      --teal:#1bb0e7;
+      --teal-dark:#0a739d;
+      --teal-light:#8be0ff;
+      --mint:#e6f8fd;
+      --mint2:#d4f2fa;
+      --bg:#f6fbfd;
+      --white:#ffffff;
+      --shadow-sm:0 8px 24px rgba(14,41,56,.06);
+      --shadow-md:0 16px 40px rgba(14,41,56,.09);
+      --shadow-lg:0 28px 70px rgba(14,41,56,.14);
+      --shadow-teal:0 18px 45px rgba(27,176,231,.28);
+      --radius:24px;
+      --max:1260px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--ink);
+      background:var(--white);
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+      position:relative;
+    }
+
+    /* Ambient dynamic glow spheres */
+    .ambient-glow{
+      position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;
+      opacity:.45;animation:auroraDrift 14s infinite alternate ease-in-out;
+    }
+    .glow-1{top:-10%;right:-5%;width:600px;height:600px;background:radial-gradient(circle,rgba(27,176,231,.25),transparent 65%)}
+    .glow-2{top:45%;left:-10%;width:550px;height:550px;background:radial-gradient(circle,rgba(139,224,255,.2),transparent 65%);animation-duration:18s}
+    .glow-3{bottom:5%;right:-10%;width:650px;height:650px;background:radial-gradient(circle,rgba(10,115,157,.18),transparent 65%);animation-duration:22s}
+
+    @keyframes auroraDrift{
+      0%{transform:translate3d(0,0,0) scale(1)}
+      50%{transform:translate3d(40px,50px,0) scale(1.12)}
+      100%{transform:translate3d(-30px,25px,0) scale(0.95)}
+    }
+
+    img{display:block;max-width:100%}
+    a{color:inherit;text-decoration:none}
+    button,a{-webkit-tap-highlight-color:transparent}
+    .container{width:min(var(--max),calc(100% - 44px));margin:auto;position:relative;z-index:2}
+
+    /* Scroll progress indicator */
+    #progress-line{
+      position:fixed;top:0;left:0;height:3.5px;background:linear-gradient(90deg,var(--teal),var(--teal-light));
+      width:0%;z-index:1000;box-shadow:0 0 10px rgba(27,176,231,.7);transition:width .08s linear;
+    }
+
+    /* Header */
+    .header{
+      position:sticky;top:0;z-index:100;
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(22px);
+      -webkit-backdrop-filter:blur(22px);
+      border-bottom:1px solid rgba(212,242,250,.7);
+      transition:all .35s ease;
+    }
+    .header.scrolled{
+      background:rgba(255,255,255,.94);
+      box-shadow:0 12px 35px rgba(14,41,56,.06);
+    }
+    .nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:900;transition:transform .25s ease}
+    .brand:hover{transform:scale(1.03)}
+    .brand-icon{
+      width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--teal-light),var(--teal-dark));
+      display:grid;place-items:center;box-shadow:0 6px 16px rgba(27,176,231,.3);position:relative;
+    }
+    .brand-icon::after{
+      content:'';width:18px;height:18px;border:3px solid #fff;border-radius:5px;
+    }
+    .wordmark{font-size:24px;letter-spacing:-1px;line-height:1;display:flex;flex-direction:column}
+    .wordmark i{font-style:normal;color:var(--teal)}
+    .wordmark small{font-size:8px;letter-spacing:.12em;color:var(--teal-dark);font-weight:900;margin-top:2px}
+    .nav-links{display:flex;align-items:center;gap:28px;font-size:14px;font-weight:750;color:var(--ink2)}
+    .nav-links a{position:relative;padding:5px 0;transition:color .2s}
+    .nav-links a::after{
+      content:'';position:absolute;bottom:0;left:50%;width:0%;height:2px;
+      background:var(--teal);transition:all .25s ease;transform:translateX(-50%);border-radius:2px;
+    }
+    .nav-links a:hover{color:var(--teal)}
+    .nav-links a:hover::after{width:100%}
+
+    /* Buttons */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:13px 22px;border-radius:14px;font-size:14px;font-weight:850;
+      transition:all .28s cubic-bezier(.16,1,.3,1);cursor:pointer;position:relative;overflow:hidden;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+      color:#fff;box-shadow:var(--shadow-teal);border:1px solid rgba(255,255,255,.2);
+    }
+    .btn-primary::before{
+      content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+      transform:skewX(-25deg);transition:.65s ease;
+    }
+    .btn-primary:hover::before{left:180%}
+    .btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 22px 50px rgba(27,176,231,.38)}
+    .btn-ghost{
+      background:rgba(255,255,255,.9);color:var(--ink2);border:1px solid #d4e8f0;
+      box-shadow:var(--shadow-sm);
+    }
+    .btn-ghost:hover{border-color:var(--teal);color:var(--teal-dark);transform:translateY(-2px);background:#fff}
+    .menu-btn{display:none;background:none;border:0;font-size:26px;color:var(--ink);cursor:pointer}
+
+    /* Hero Section */
+    .hero{padding:60px 0 70px;position:relative}
+    .hero-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:center}
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;
+      background:var(--mint);border:1px solid rgba(27,176,231,.25);font-size:11px;font-weight:900;
+      letter-spacing:.08em;color:var(--teal-dark);text-transform:uppercase;margin-bottom:18px;
+    }
+    .hero-badge span{
+      width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);
+      animation:pulsePoint 2s infinite ease-in-out;
+    }
+    @keyframes pulsePoint{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.7);opacity:.4}}
+    h1{font-size:clamp(44px,5.4vw,70px);line-height:1.02;letter-spacing:-.05em;margin-bottom:20px}
+    h1 .accent{
+      background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 70%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block;
+    }
+    .hero-copy{font-size:18px;color:var(--muted);margin-bottom:28px;max-width:540px;line-height:1.6}
+    .hero-copy strong{color:var(--ink)}
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+    .hero-mini{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:800;color:var(--teal-dark)}
+    .hero-mini span{
+      background:#fff;border:1px solid #dff1f7;padding:5px 12px;border-radius:8px;
+      box-shadow:0 4px 12px rgba(14,41,56,.03);
+    }
+
+    /* Hero Stage & 3D Devices */
+    .hero-stage{
+      position:relative;perspective:1200px;display:flex;justify-content:center;align-items:center;
+      min-height:460px;
+    }
+    .hero-orbit{
+      position:absolute;width:420px;height:420px;border-radius:50%;
+      border:1.5px dashed rgba(27,176,231,.3);
+      animation:rotateOrbit 35s linear infinite;pointer-events:none;
+    }
+    .hero-orbit::after{
+      content:'';position:absolute;top:28px;left:42px;width:12px;height:12px;
+      border-radius:50%;background:var(--teal);box-shadow:0 0 14px var(--teal);
+    }
+    @keyframes rotateOrbit{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    
+    .hero-device{
+      position:relative;width:100%;max-width:520px;border-radius:28px;
+      box-shadow:var(--shadow-lg);border:1px solid rgba(255,255,255,.9);
+      animation:floatTablet 7s ease-in-out infinite;
+      transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:2;
+    }
+    @keyframes floatTablet{
+      0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
+      50%{transform:translate3d(0,-14px,0) rotate(0.6deg)}
+    }
+
+    /* Phone Mockup Card */
+    .phone-card{
+      position:absolute;right:-14px;bottom:-20px;width:215px;height:380px;
+      background:#0f242e;border-radius:36px;padding:9px;border:3px solid #314d5a;
+      box-shadow:0 30px 60px rgba(8,23,31,.32);z-index:4;
+      animation:floatPhone 6s ease-in-out infinite alternate;
+      transition:transform .3s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes floatPhone{
+      0%{transform:translate3d(0,0,0) rotate(0deg)}
+      100%{transform:translate3d(0,-18px,0) rotate(-1.5deg)}
+    }
+    .phone-screen{
+      background:#f3f9fb;width:100%;height:100%;border-radius:28px;padding:14px 12px;
+      display:flex;flex-direction:column;font-size:12px;overflow:hidden;
+    }
+    .phone-top{font-size:10px;font-weight:900;letter-spacing:.05em;color:var(--teal-dark);margin-bottom:8px}
+    .phone-top small{background:var(--teal);color:#fff;padding:2px 5px;border-radius:4px;font-size:7px;margin-left:3px}
+    .phone-label{font-size:8px;font-weight:900;color:var(--muted);letter-spacing:.1em}
+    .phone-title{font-size:13px;font-weight:900;margin-bottom:8px;color:var(--ink)}
+    .table-chip{
+      background:#fff;border:1px solid #d9edf4;border-radius:8px;padding:6px 9px;
+      margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;
+      font-size:11px;font-weight:800;transition:all .2s;
+    }
+    .table-chip em{font-style:normal;font-size:9px;color:var(--muted);font-weight:600}
+    .table-chip.active{
+      background:var(--mint);border-color:var(--teal);color:var(--teal-dark);
+      box-shadow:0 3px 10px rgba(27,176,231,.15);
+    }
+    .table-chip.active em{color:var(--teal-dark);font-weight:800}
+    .send-mini{
+      margin-top:auto;background:var(--teal-dark);color:#fff;text-align:center;
+      padding:8px 0;border-radius:8px;font-size:10px;font-weight:900;letter-spacing:.06em;
+      box-shadow:0 6px 14px rgba(10,115,157,.3);animation:pulseButton 2.5s infinite;
+    }
+    @keyframes pulseButton{
+      0%,100%{transform:scale(1)}50%{transform:scale(1.04)}
+    }
+
+    .floating-note{
+      position:absolute;left:-16px;bottom:30px;background:#fff;border:1px solid #d9edf4;
+      padding:11px 16px;border-radius:16px;font-size:12px;font-weight:700;color:var(--teal-dark);
+      box-shadow:0 18px 40px rgba(14,41,56,.12);z-index:5;
+      animation:floatNote 5.5s ease-in-out infinite alternate;
+    }
+    @keyframes floatNote{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(0,-12px,0)}}
+    .floating-note b{color:var(--ink);display:block;font-size:13px}
+
+    /* Promise Cards */
+    .promise{padding:30px 0 60px}
+    .promise-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .promise-card{
+      background:#fff;border:1px solid #dfedf3;border-radius:20px;padding:26px 24px;
+      box-shadow:var(--shadow-sm);transition:all .32s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;
+    }
+    .promise-card::after{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--teal),var(--teal-light));opacity:0;transition:opacity .3s;
+    }
+    .promise-card:hover{
+      transform:translateY(-8px);box-shadow:var(--shadow-md);border-color:var(--teal-light);
+    }
+    .promise-card:hover::after{opacity:1}
+    .promise-no{font-size:11px;font-weight:900;color:var(--teal);letter-spacing:.12em;margin-bottom:10px}
+    .promise-card h3{font-size:18px;margin-bottom:6px}
+    .promise-card p{font-size:13px;color:var(--muted);line-height:1.55}
+
+    /* Workflow & Interactive Flow Line */
+    .workflow{padding:70px 0;background:linear-gradient(180deg,#fff 0%,#f3fafd 50%,#fff 100%)}
+    .section-head{text-align:center;max-width:740px;margin:0 auto 46px}
+    .kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:900;margin-bottom:8px}
+    .section-title{font-size:clamp(32px,3.8vw,46px);letter-spacing:-.04em;line-height:1.08;margin-bottom:12px}
+    .section-lead{color:var(--muted);font-size:16px;line-height:1.6}
+    
+    .flow-track{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative}
+    .flow-track::before{
+      content:'';position:absolute;top:44px;left:15%;right:15%;height:3px;
+      background:dashed #d7ecf3;z-index:1;
+    }
+    .flow-pulse{
+      position:absolute;top:43px;left:15%;width:40px;height:5px;
+      background:linear-gradient(90deg,transparent,var(--teal),transparent);
+      border-radius:10px;z-index:2;animation:travelPulse 4s infinite linear;
+    }
+    @keyframes travelPulse{0%{left:15%;opacity:0}20%{opacity:1}80%{opacity:1}100%{left:80%;opacity:0}}
+
+    .flow-step{
+      background:#fff;border:1px solid #d9edf4;border-radius:22px;padding:28px 22px;
+      position:relative;z-index:3;box-shadow:var(--shadow-sm);transition:all .3s ease;text-align:center;
+    }
+    .flow-step:hover{transform:translateY(-6px);box-shadow:var(--shadow-md);border-color:var(--teal)}
+    .flow-icon{
+      width:60px;height:60px;border-radius:18px;background:var(--mint);margin:0 auto 18px;
+      display:grid;place-items:center;transition:transform .3s;
+    }
+    .flow-icon svg{width:32px;height:32px;fill:none;stroke:var(--teal-dark);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+    .flow-step:hover .flow-icon{transform:scale(1.12) rotate(6deg);background:var(--teal);stroke:#fff}
+    .flow-step:hover .flow-icon svg{stroke:#fff}
+    .flow-step h3{font-size:17px;margin-bottom:7px}
+    .flow-step p{font-size:13px;color:var(--muted)}
+
+    /* Story Sections */
+    .story{padding:60px 0}
+    .story-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}
+    .story-grid.reverse{grid-template-columns:1.05fr 1fr}
+    .story-grid.reverse .story-copy{order:2}
+    .story-grid.reverse .story-visual{order:1}
+    .story-copy h2{font-size:clamp(30px,3.5vw,42px);letter-spacing:-.04em;line-height:1.1;margin-bottom:14px}
+    .story-copy p{color:var(--muted);font-size:16px;margin-bottom:24px}
+    .checks{display:grid;gap:13px}
+    .check{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--ink2);transition:transform .2s}
+    .check:hover{transform:translateX(5px)}
+    .check i{
+      width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;
+      display:grid;place-items:center;font-size:11px;font-weight:900;font-style:normal;
+      flex:none;box-shadow:0 3px 8px rgba(27,176,231,.35);margin-top:1px;
+    }
+
+    .visual-card{
+      background:#fff;border:1px solid #d9edf4;border-radius:28px;overflow:hidden;
+      box-shadow:var(--shadow-md);transition:all .35s ease;position:relative;
+    }
+    .visual-card:hover{transform:scale(1.015);box-shadow:var(--shadow-lg)}
+    .visual-card img{width:100%;height:auto;object-fit:cover}
+
+    /* Kitchen Scene Animated */
+    .kitchen-scene{
+      background:linear-gradient(145deg,#132832,#0c1d25);padding:36px;color:#fff;min-height:360px;
+      display:flex;justify-content:center;align-items:center;position:relative;
+    }
+    .kitchen-unit{
+      background:#1f3a47;border-radius:20px;border:2px solid #2f5466;width:min(320px,100%);
+      padding:18px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.4);
+    }
+    .kitchen-screen{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .kitchen-screen small{color:var(--teal-light);font-weight:900;letter-spacing:.08em;font-size:9px}
+    .kitchen-screen h4{font-size:16px;color:#fff}
+    .receipt{
+      background:#fff;color:#111;border-radius:10px;padding:16px;font-family:monospace;
+      font-size:12px;line-height:1.6;box-shadow:0 8px 20px rgba(0,0,0,.2);
+      animation:printTicket 6s ease-in-out infinite;
+    }
+    @keyframes printTicket{
+      0%{clip-path:inset(0 0 80% 0);transform:translateY(-10px)}
+      40%,90%{clip-path:inset(0 0 0 0);transform:translateY(0)}
+      100%{clip-path:inset(0 0 80% 0);transform:translateY(-10px)}
+    }
+    .receipt-title{font-weight:bold;border-bottom:1px dashed #ccc;padding-bottom:5px;margin-bottom:8px;text-align:center}
+    .receipt-row{display:flex;justify-content:space-between;font-weight:bold}
+    .receipt-note{background:#f0f0f0;padding:4px 6px;border-radius:4px;margin-top:8px;font-size:10px}
+    .kitchen-led{
+      position:absolute;top:16px;right:16px;width:10px;height:10px;border-radius:50%;
+      background:#10e588;box-shadow:0 0 10px #10e588;animation:blinkLed 1.4s infinite;
+    }
+    @keyframes blinkLed{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* Bento Grid (Spotlight on hover) */
+    .features{padding:70px 0}
+    .bento{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .feature{
+      background:#fff;border:1px solid #d9edf4;border-radius:24px;padding:30px;
+      box-shadow:var(--shadow-sm);transition:all .32s cubic-bezier(.16,1,.3,1);
+      position:relative;overflow:hidden;
+    }
+    .feature:hover{transform:translateY(-6px);box-shadow:var(--shadow-md);border-color:var(--teal)}
+    .feature.big{grid-column:span 2}
+    .feature.tint{background:linear-gradient(135deg,#e9f7fb 0%,#daf0f7 100%);border-color:#cae8f2}
+    .feature.dark{background:#0e2938;color:#fff;border-color:#1c4257}
+    .feature.dark p{color:#9ab5c2}
+    .feature .tag{
+      display:inline-block;font-size:10px;font-weight:900;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--teal);margin-bottom:12px;
+    }
+    .feature.dark .tag{color:var(--teal-light)}
+    .feature h3{font-size:20px;margin-bottom:8px;line-height:1.2}
+    .feature p{font-size:14px;color:var(--muted);line-height:1.55}
+    .feature-mark{
+      position:absolute;bottom:16px;right:20px;font-size:28px;font-weight:900;
+      color:rgba(27,176,231,.18);pointer-events:none;
+    }
+    .feature.dark .feature-mark{color:rgba(255,255,255,.08)}
+
+    /* Audience */
+    .audience{padding:60px 0}
+    .audience-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .audience-card{
+      background:#fff;border:1px solid #d9edf4;border-radius:22px;padding:26px 20px;
+      text-align:center;font-size:18px;font-weight:900;box-shadow:var(--shadow-sm);
+      transition:all .3s cubic-bezier(.16,1,.3,1);cursor:default;
+    }
+    .audience-card:hover{
+      transform:translateY(-8px) scale(1.03);border-color:var(--teal);
+      box-shadow:var(--shadow-teal);color:var(--teal-dark);
+    }
+    .audience-card span{display:block;font-size:36px;margin-bottom:10px;transition:transform .3s}
+    .audience-card:hover span{transform:scale(1.22) rotate(6deg)}
+    .audience-card small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:6px}
+
+    /* Pricing */
+    .pricing{padding:60px 0}
+    .price-card{
+      background:linear-gradient(135deg,#0e2938 0%,#15384b 100%);color:#fff;
+      border-radius:32px;padding:50px;box-shadow:var(--shadow-lg);text-align:center;
+      position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.1);
+    }
+    .price-card::before{
+      content:'';position:absolute;top:-40%;right:-40%;width:350px;height:350px;
+      background:radial-gradient(circle,rgba(27,176,231,.3),transparent 70%);border-radius:50%;
+    }
+    .price-badge{
+      display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(27,176,231,.2);
+      border:1px solid rgba(27,176,231,.4);color:var(--teal-light);font-size:11px;font-weight:900;
+      letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;
+    }
+    .price-card h2{font-size:clamp(32px,4vw,46px);margin-bottom:14px}
+    .price-row{display:flex;justify-content:center;align-items:flex-end;gap:8px;margin:18px 0 24px}
+    .price-value{font-size:68px;font-weight:950;line-height:.9;color:var(--teal-light);letter-spacing:-.05em}
+    .price-value sup{font-size:28px;letter-spacing:-.02em}
+    .price-meta{font-size:14px;color:#9ab5c2;font-weight:700;padding-bottom:8px}
+    .price-card p{margin:0 auto 28px;line-height:1.6}
+    .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:34px;text-align:left}
+    .price-point{
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
+      border-radius:16px;padding:16px;font-size:13px;color:#b6cfdb;transition:background .2s;
+    }
+    .price-point:hover{background:rgba(255,255,255,.1)}
+    .price-point strong{display:block;color:#fff;font-size:14px;margin-bottom:3px}
+    .price-card .btn{background:#fff;color:var(--ink);font-size:15px;padding:15px 28px}
+    .price-card .btn:hover{background:var(--mint);color:var(--teal-dark);transform:translateY(-3px) scale(1.03)}
+
+    /* FAQ */
+    .faq{padding:60px 0}
+    .faq-list{max-width:880px;margin:0 auto;display:grid;gap:14px}
+    .faq details{
+      background:#fff;border:1px solid #d9edf4;border-radius:18px;box-shadow:var(--shadow-sm);
+      overflow:hidden;transition:all .28s ease;
+    }
+    .faq details[open]{border-color:var(--teal);box-shadow:var(--shadow-teal)}
+    .faq summary{
+      cursor:pointer;list-style:none;padding:20px 24px;font-weight:900;font-size:16px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .faq summary::-webkit-details-marker{display:none}
+    .faq summary::after{
+      content:'+';width:28px;height:28px;border-radius:50%;background:var(--mint);
+      color:var(--teal-dark);display:grid;place-items:center;font-size:18px;font-weight:900;
+      flex:none;transition:transform .3s ease, background .3s;
+    }
+    .faq details[open] summary::after{content:'−';transform:rotate(180deg);background:var(--teal);color:#fff}
+    .faq-answer{padding:0 24px 22px;color:var(--muted);font-size:14px;line-height:1.7}
+    .faq-answer strong{color:var(--ink)}
+
+    /* Final CTA */
+    .final-cta{padding:40px 0 80px}
+    .final-box{
+      background:linear-gradient(135deg,var(--teal-dark),var(--teal));color:#fff;
+      border-radius:30px;padding:44px 50px;display:grid;grid-template-columns:1fr auto;
+      gap:24px;align-items:center;box-shadow:var(--shadow-teal);position:relative;overflow:hidden;
+    }
+    .final-box h2{font-size:36px;line-height:1.05;margin-bottom:8px}
+    .final-box p{color:rgba(255,255,255,.9)}
+    .final-box .btn{background:#fff;color:var(--teal-dark)}
+    .final-box .btn:hover{background:#f3fbfe;transform:scale(1.04)}
+
+    /* Footer */
+    .footer{border-top:1px solid #dcecf2;padding:48px 0 34px;background:#fbfdfe}
+    .footer-grid{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:28px;margin-bottom:34px}
+    .footer h4{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px}
+    .footer-links{display:grid;gap:9px;font-size:14px;color:var(--ink2)}
+    .footer-links a{transition:color .2s,transform .2s;display:inline-block}
+    .footer-links a:hover{color:var(--teal);transform:translateX(3px)}
+    .footer-bottom{
+      border-top:1px solid #e5f1f5;padding-top:20px;display:flex;justify-content:space-between;
+      font-size:13px;color:var(--muted);
+    }
+
+    /* Scroll Reveal & Physics */
+    .reveal{
+      opacity:0;transform:translate3d(0,28px,0) scale(.98);
+      transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);
+      will-change:opacity,transform;
+    }
+    .reveal.visible{opacity:1;transform:translate3d(0,0,0) scale(1)}
+
+    /* Responsive */
+    @media(max-width:1080px){
+      .hero-grid,.story-grid,.story-grid.reverse{grid-template-columns:1fr;gap:36px}
+      .story-grid.reverse .story-copy{order:1}
+      .story-grid.reverse .story-visual{order:2}
+      .bento{grid-template-columns:repeat(2,1fr)}
+      .feature.big{grid-column:span 2}
+      .audience-grid{grid-template-columns:repeat(2,1fr)}
+      .price-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:860px){
+      .nav-links,.header .btn-primary{display:none}
+      .menu-btn{display:block}
+      .nav-links.is-open{
+        display:flex;position:absolute;top:76px;left:14px;right:14px;background:#fff;
+        flex-direction:column;padding:22px;border-radius:20px;border:1px solid #d9edf4;
+        box-shadow:var(--shadow-lg);gap:16px;align-items:stretch;text-align:center;
+      }
+      .promise-grid,.flow-track{grid-template-columns:1fr}
+      .flow-track::before,.flow-pulse{display:none}
+      .bento{grid-template-columns:1fr}
+      .feature.big{grid-column:span 1}
+      .final-box{grid-template-columns:1fr;padding:32px 24px}
+      .footer-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:580px){
+      .phone-card{position:relative;right:auto;bottom:auto;margin:20px auto 0;width:100%;max-width:240px}
+      .floating-note{left:10px;bottom:-10px}
+      .price-card{padding:30px 20px}
+      .footer-grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body id="top">
+<div id="progress-line"></div>
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
+
 <header class="header">
   <div class="container nav">
     <a class="brand" href="#top" aria-label="CassaIQ home">
       <span class="brand-icon" aria-hidden="true"></span>
       <span class="wordmark">Cassa<i>IQ</i><small>RT + CLIENT</small></span>
     </a>
-    <nav class="nav-links" aria-label="Navigazione principale">
+    <nav class="nav-links" id="nav-menu" aria-label="Navigazione principale">
       <a href="#come-funziona">Come funziona</a>
       <a href="#funzioni">Funzioni</a>
       <a href="#attivita">Attività</a>
@@ -48,10 +539,10 @@
       </div>
       <div class="hero-mini"><span>iPad · iPhone · Android</span><span>DCO · Epson RT</span><span>CassaIQ Client</span></div>
     </div>
-    <div class="hero-stage reveal" aria-label="CassaIQ RT con CassaIQ Client">
+    <div class="hero-stage reveal" id="hero-stage" aria-label="CassaIQ RT con CassaIQ Client">
       <div class="hero-orbit"></div>
-      <img class="hero-device" src="assets/hero-pos.webp" alt="CassaIQ RT su tablet con prodotti e carrello">
-      <div class="phone-card" aria-hidden="true">
+      <img class="hero-device tilt-target" src="assets/hero-pos.webp" alt="CassaIQ RT su tablet con prodotti e carrello">
+      <div class="phone-card tilt-target" aria-hidden="true">
         <div class="phone-screen">
           <div class="phone-top">CassaIQ <small>CLIENT</small></div>
           <div class="phone-body">
@@ -93,7 +584,7 @@
   <div class="container story-grid">
     <div class="story-copy reveal"><div class="kicker">Sala</div><h2>Prendi l'ordine dove nasce.</h2><p>Con CassaIQ Client il personale lavora direttamente dal telefono: apre il tavolo, aggiunge prodotti, inserisce note e gestisce supplementi o ingredienti da aggiungere e rimuovere.</p><div class="checks"><div class="check"><i>✓</i><span>Tavoli e catalogo sincronizzati con la cassa.</span></div><div class="check"><i>✓</i><span>Ingredienti <strong>+</strong> con sovrapprezzo e <strong>−</strong> senza variazione di prezzo.</span></div><div class="check"><i>✓</i><span>Storico delle comande già inviate sempre visibile.</span></div></div></div>
     <div class="story-visual reveal">
-      <div class="visual-card" style="padding:30px;background:linear-gradient(145deg,#eefafd,#dff4f8)"><div class="phone-card" style="position:relative;left:auto;bottom:auto;margin:auto;width:250px;height:510px;transform:none;animation:none"><div class="phone-screen"><div class="phone-top">CassaIQ <small>CLIENT</small></div><div class="phone-body"><div class="phone-label">ATTIVITÀ COLLEGATA</div><div class="phone-title">Sala</div><div class="table-chip"><span>Tavolo 2</span><em>Occupato</em></div><div class="table-chip active"><span>Tavolo 3</span><em>In ordine</em></div><div class="table-chip"><span>+ Margherita</span><em>€ 7,00</em></div><div class="table-chip"><span>+ Mozzarella</span><em>€ 1,00</em></div><div class="table-chip"><span>− Cipolla</span><em>invariato</em></div><div class="send-mini">INVIA COMANDA →</div></div></div></div></div>
+      <div class="visual-card" style="padding:30px;background:linear-gradient(145deg,#eefafd,#dff4f8)"><div class="phone-card" style="position:relative;left:auto;bottom:auto;margin:auto;width:250px;height:480px;transform:none;animation:none"><div class="phone-screen"><div class="phone-top">CassaIQ <small>CLIENT</small></div><div class="phone-body"><div class="phone-label">ATTIVITÀ COLLEGATA</div><div class="phone-title">Sala</div><div class="table-chip"><span>Tavolo 2</span><em>Occupato</em></div><div class="table-chip active"><span>Tavolo 3</span><em>In ordine</em></div><div class="table-chip"><span>+ Margherita</span><em>€ 7,00</em></div><div class="table-chip"><span>+ Mozzarella</span><em>€ 1,00</em></div><div class="table-chip"><span>− Cipolla</span><em>invariato</em></div><div class="send-mini">INVIA COMANDA →</div></div></div></div></div>
     </div>
   </div>
 </section>
@@ -168,7 +659,7 @@
       <details class="reveal"><summary>Posso inviare le comande direttamente in cucina?</summary><div class="faq-answer">Sì. CassaIQ può utilizzare una stampante ESC/POS di rete dedicata alla cucina. Il ticket contiene tavolo, data e ora, quantità, prodotti e note, senza prezzi.</div></details>
       <details class="reveal"><summary>Come gestisce la parte fiscale?</summary><div class="faq-answer">CassaIQ può essere configurata per la modalità <strong>Documento Commerciale Online</strong> oppure per il flusso con <strong>Epson RT</strong> supportato, in base alla configurazione scelta per l'attività.</div></details>
       <details class="reveal"><summary>Le credenziali Fisconline vengono salvate nel cloud?</summary><div class="faq-answer">No. Le credenziali Fisconline non vengono salvate nel database cloud di CassaIQ: restano sul dispositivo e vengono conservate nell'area sicura del sistema operativo.</div></details>
-      <details class="reveal"><summary>Quanto costa CassaIQ?</summary><div class="faq-answer">La prova è gratuita per 30 giorni. Successivamente il prezzo indicato è <strong>€ 8,19 + IVA al mese</strong>.</div></details>
+      <details class="reveal"><summary>Quanto costa CassaIQ?</summary><div class="faq-answer">La prova è gratuita per 30 giorni. Successivamente il prezzo indicato è <strong>€ 8,90 + IVA al mese</strong>.</div></details>
     </div>
   </div>
 </section>
@@ -189,6 +680,80 @@
     <div class="footer-bottom"><span>© 2026 Menoova · CassaIQ</span><span>cassaiq.com</span></div>
   </div>
 </footer>
-<script src="assets/app.js" defer></script>
+
+<script>
+  // Scroll progress bar & dynamic header
+  window.addEventListener('scroll', () => {
+    const winScroll = document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (winScroll / height) * 100;
+    const bar = document.getElementById('progress-line');
+    if (bar) bar.style.width = progress + '%';
+
+    const header = document.querySelector('.header');
+    if (header) {
+      if (winScroll > 30) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    }
+  }, { passive: true });
+
+  // Intersection Observer per staggered scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  // 3D Parallax Tilt effect on Desktop
+  if (window.matchMedia('(pointer: fine)').matches) {
+    const stage = document.getElementById('hero-stage');
+    const targets = document.querySelectorAll('.tilt-target');
+
+    stage?.addEventListener('mousemove', (e) => {
+      const rect = stage.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+      targets.forEach((target, i) => {
+        const factor = (i + 1) * 16;
+        target.style.transform = `perspective(1000px) rotateY(${x * factor}deg) rotateX(${-y * factor}deg) translateZ(${i * 20}px)`;
+      });
+    });
+
+    stage?.addEventListener('mouseleave', () => {
+      targets.forEach((target) => {
+        target.style.transform = '';
+      });
+    });
+  }
+
+  // Mobile menu toggle
+  const menuBtn = document.querySelector('.menu-btn');
+  const navMenu = document.getElementById('nav-menu');
+
+  menuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navMenu.classList.toggle('is-open');
+    menuBtn.setAttribute('aria-expanded', navMenu.classList.contains('is-open'));
+  });
+
+  document.querySelectorAll('#nav-menu a').forEach((link) => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('is-open');
+      menuBtn?.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (navMenu && !navMenu.contains(e.target) && !menuBtn?.contains(e.target)) {
+      navMenu.classList.remove('is-open');
+      menuBtn?.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>
 </body>
 </html>
