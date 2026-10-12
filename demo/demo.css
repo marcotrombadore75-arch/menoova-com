@@ -1,0 +1,22 @@
+.demo-banner{display:flex;justify-content:space-between;align-items:center;gap:14px;min-height:33px;padding:7px 18px;background:#dce9cd;color:#27472e;font-size:10px;line-height:1.7;position:sticky;top:0;z-index:12}.demo-banner a{color:#315a35;text-decoration:none;white-space:nowrap}.sidebar{top:33px;height:calc(100vh - 33px)}.layout{min-height:calc(100vh - 33px)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #648b43;outline-offset:3px}.overlay{z-index:30}#toast{z-index:40}.demo-banner+div{scroll-margin-top:33px}@media(max-width:720px){.sidebar{top:auto;height:72px}.demo-banner{font-size:8px;padding:7px 12px;min-height:30px}.demo-banner>span{max-width:230px}.topbar time{font-size:9px}.content{padding-top:15px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Embedded demo keeps the app navigation visible while the content scrolls. */
+.embedded-demo,.embedded-demo body{height:100%;overflow:hidden}
+.embedded-demo .demo-banner{display:none}
+.embedded-demo .layout{height:100%;min-height:0;grid-template-columns:172px minmax(0,1fr)}
+.embedded-demo .sidebar{top:0;height:100%;padding:20px 12px}
+.embedded-demo .sidebar .brand{padding:0 8px 24px;font-size:20px}
+.embedded-demo .sidebar .brand small{font-size:9px}
+.embedded-demo .sidebar .nav{padding:10px;gap:9px;font-size:12px;min-height:44px}
+.embedded-demo .sidebar-bottom{padding:15px 8px 0}
+.embedded-demo .content{height:100%;overflow:auto;overscroll-behavior-y:contain;scrollbar-width:thin;--page-gutter:20px;padding:0 var(--page-gutter) 28px}
+.embedded-demo .topbar{position:sticky;top:0;z-index:8;margin-bottom:18px;padding-top:13px;padding-bottom:13px;min-height:50px}
+.embedded-demo .topbar .business{font-size:13px}
+.embedded-demo .topbar time{font-size:10px}
+.embedded-demo button{min-height:38px;font-size:13px;padding:8px 12px}
+.embedded-demo .card{padding:17px;margin-bottom:12px}
+.embedded-demo .page-head{margin-bottom:18px}
+.embedded-demo h1{font-size:25px}
+.embedded-demo .modal{max-height:calc(100dvh - 20px)}
+.embedded-demo .overlay{padding:10px}
+@media(max-width:720px){.embedded-demo .layout{display:block}.embedded-demo .sidebar{position:fixed;top:auto;bottom:0;height:61px;padding:4px;z-index:10}.embedded-demo .sidebar .brand,.embedded-demo .sidebar-bottom{display:none}.embedded-demo .sidebar .nav{padding:5px 2px;font-size:9px;min-height:51px;gap:3px}.embedded-demo .sidebar .nav .icon{width:18px;height:18px}.embedded-demo .content{--page-gutter:14px;padding-bottom:80px}.embedded-demo .topbar{margin-bottom:16px}.embedded-demo .topbar .business{font-size:12px}.embedded-demo .topbar time{font-size:9px}.embedded-demo .page-head.register-head h1{font-size:23px}.embedded-demo .page-head.register-head .actions button{padding:8px 11px;min-height:38px;font-size:12px}.embedded-demo .grid{gap:12px}}
