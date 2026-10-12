@@ -1,5 +1,0 @@
-HaccpIQ - Sito statico
-
-Estrai lo ZIP e carica il contenuto nella cartella pubblica del tuo hosting (es. public_html). index.html deve essere direttamente nella cartella pubblica, insieme ad assets, demo e downloads.
-
-Sono inclusi il sito attuale, la demo interattiva e l’APK 0.4.1 attualmente offerto dal sito. Il pagamento Stripe non è ancora collegato. L’APK 0.5.0 con account Supabase è consegnato separatamente: prima della distribuzione ai clienti va completata la configurazione delle email di conferma.
